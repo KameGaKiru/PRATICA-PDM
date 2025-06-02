@@ -2,8 +2,6 @@ package com.example.weatherapp
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -29,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -91,14 +90,16 @@ Spacer(modifier = modifier.size(12.dp)) // espaço entre título e campo
             value = password,
             label = { Text(text = "Digite sua senha!") },
             modifier = modifier.fillMaxWidth(fraction = 0.9f),
-            onValueChange = { password = it }
+            onValueChange = { password = it },
+            visualTransformation = PasswordVisualTransformation()
         )
 
         OutlinedTextField(
             value = passwordConfirm,
             label = { Text(text = "Confirme sua senha!") },
             modifier = modifier.fillMaxWidth(fraction = 0.9f),
-            onValueChange = { passwordConfirm = it }
+            onValueChange = { passwordConfirm = it },
+            visualTransformation = PasswordVisualTransformation()
         )
 
         Spacer(modifier = modifier.size(12.dp)) // espaço entre o campo e os botões
