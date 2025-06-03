@@ -14,13 +14,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 
+
 @SuppressLint("ContextCastToActivity")
 @Composable
 fun HomePage(modifier: Modifier) {
+
     Column(
         modifier = Modifier.fillMaxSize()
             .background(Color.Blue)
             .wrapContentSize(Alignment.Center)
+
     ) {
         Text(
             text = "Home",
