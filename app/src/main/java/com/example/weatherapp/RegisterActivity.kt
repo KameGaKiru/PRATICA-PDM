@@ -70,8 +70,6 @@ fun RegisterPage( modifier: Modifier = Modifier) {
             fontSize = 24.sp
         )
 
-Spacer(modifier = modifier.size(12.dp)) // espaço entre título e campo
-
         OutlinedTextField(
             value = userName,
             label = { Text(text = "Digite seu Nome") },
@@ -101,8 +99,6 @@ Spacer(modifier = modifier.size(12.dp)) // espaço entre título e campo
             onValueChange = { passwordConfirm = it },
             visualTransformation = PasswordVisualTransformation()
         )
-
-        Spacer(modifier = modifier.size(12.dp)) // espaço entre o campo e os botões
 
         Row(modifier = modifier) {
             Button(
