@@ -1,5 +1,6 @@
 package com.example.weatherapp.ui
 
+import MainViewModel
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -17,7 +18,7 @@ import androidx.compose.ui.unit.sp
 
 @SuppressLint("ContextCastToActivity")
 @Composable
-fun HomePage(modifier: Modifier) {
+fun HomePage(modifier: Modifier, viewModel: MainViewModel) {
 
     Column(
         modifier = Modifier.fillMaxSize()
