@@ -35,7 +35,6 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import android.Manifest
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 
 class MainActivity : ComponentActivity() {
@@ -68,7 +67,7 @@ class MainActivity : ComponentActivity() {
 
                                 IconButton( onClick = {
                                     Firebase.auth.signOut()
-                                    finish() } )
+                                   } )
                                 {
                                     Icon(
                                         imageVector =
