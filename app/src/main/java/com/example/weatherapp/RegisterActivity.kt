@@ -32,6 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.weatherapp.ui.theme.WeatherAppTheme
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class RegisterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +42,7 @@ class RegisterActivity : ComponentActivity() {
         setContent {
             WeatherAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                        RegisterPage(modifier = Modifier.padding(innerPadding)
+                    RegisterPage(modifier = Modifier.padding(innerPadding)
                     )
                 }
             }
@@ -103,8 +105,21 @@ fun RegisterPage( modifier: Modifier = Modifier) {
         Row(modifier = modifier) {
             Button(
                 onClick = {
-                    Toast.makeText(activity, "Resgistro OK!", Toast.LENGTH_LONG).show()
-                    activity?.finish()
+                    Firebase.auth.createUserWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(activity!!) { task ->
+                            if (task.isSuccessful) {
+                                Toast.makeText(
+                                    activity,
+                                    "Registro OK!", Toast.LENGTH_LONG
+                                ).show()
+                                activity.finish()
+                            } else {
+                                Toast.makeText(
+                                    activity,
+                                    "Registro FALHOU!", Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
                 },
                 enabled = userName.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && passwordConfirm.isNotEmpty()
 
@@ -113,12 +128,12 @@ fun RegisterPage( modifier: Modifier = Modifier) {
                 Text("Registrar")
             }
 
-        Button(
-            onClick = { userName = ""; email = ""; password = ""; passwordConfirm = "" }
-        ) {
-            Text("Limpar")
+            Button(
+                onClick = { userName = ""; email = ""; password = ""; passwordConfirm = "" }
+            ) {
+                Text("Limpar")
+            }
         }
     }
-}
 }
 
