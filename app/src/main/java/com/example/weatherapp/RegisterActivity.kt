@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.weatherapp.ui.theme.WeatherAppTheme
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class RegisterActivity : ComponentActivity() {
@@ -57,6 +59,9 @@ fun RegisterPage( modifier: Modifier = Modifier) {
     var password by rememberSaveable { mutableStateOf("") }
     var passwordConfirm by rememberSaveable { mutableStateOf("") }
     val activity = LocalContext.current as? Activity
+    val db = com.google.firebase.Firebase.firestore
+    val userId = Firebase.auth.currentUser?.uid
+
 
     Column(
         modifier = modifier
@@ -110,6 +115,26 @@ fun RegisterPage( modifier: Modifier = Modifier) {
                                     activity,
                                     "Registro OK!", Toast.LENGTH_LONG
                                 ).show()
+
+                                val userId = Firebase.auth.currentUser?.uid
+                                val db = Firebase.firestore
+
+                                val user = hashMapOf(
+                                    "nome" to userName,
+                                    "email" to email,
+                                    "criadoEm" to System.currentTimeMillis()
+                                )
+
+                                if (userId != null) {
+                                    db.collection("users").document(userId)
+                                        .set(user)
+                                        .addOnSuccessListener {
+                                            Toast.makeText(activity, "Usuário salvo no Firestore!", Toast.LENGTH_SHORT).show()
+                                        }
+                                        .addOnFailureListener { e ->
+                                            Toast.makeText(activity, "Erro ao salvar no Firestore!", Toast.LENGTH_SHORT).show()
+                                        }
+                                }
                             } else {
                                 Toast.makeText(
                                     activity,
@@ -119,7 +144,6 @@ fun RegisterPage( modifier: Modifier = Modifier) {
                         }
                 },
                 enabled = userName.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && passwordConfirm.isNotEmpty()
-
             )
             {
                 Text("Registrar")
