@@ -8,7 +8,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -34,6 +33,9 @@ import com.example.weatherapp.ui.theme.WeatherAppTheme
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import android.Manifest
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.weatherapp.db.fb.FBDatabase
+import com.example.weatherapp.model.MainViewModelFactory
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
@@ -44,8 +46,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
 
+            val fbDB = remember { FBDatabase }
+            val viewModel : MainViewModel = viewModel(
+                factory = MainViewModelFactory(fbDB)
+            )
+
             var showDialog by remember { mutableStateOf(false) }
-            val viewModel : MainViewModel by viewModels()
+            //val viewModel : MainViewModel by viewModels()
             val navController = rememberNavController()
             val currentRoute = navController.currentBackStackEntryAsState()
             val showButton = currentRoute.value?.destination?.hasRoute(BottomNavItem.Route.List::class) == true

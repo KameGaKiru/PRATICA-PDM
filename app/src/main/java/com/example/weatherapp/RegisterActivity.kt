@@ -1,5 +1,6 @@
 package com.example.weatherapp
 
+import android.R.attr.name
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
@@ -29,10 +30,12 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.weatherapp.db.fb.FBDatabase
+import com.example.weatherapp.db.fb.toFBUser
+import com.example.weatherapp.model.User
 import com.example.weatherapp.ui.theme.WeatherAppTheme
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.firestore
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class RegisterActivity : ComponentActivity() {
@@ -116,25 +119,8 @@ fun RegisterPage( modifier: Modifier = Modifier) {
                                     "Registro OK!", Toast.LENGTH_LONG
                                 ).show()
 
-                                val userId = Firebase.auth.currentUser?.uid
-                                val db = Firebase.firestore
+                                FBDatabase.register(User(userName, email).toFBUser())
 
-                                val user = hashMapOf(
-                                    "nome" to userName,
-                                    "email" to email,
-                                    "criadoEm" to System.currentTimeMillis()
-                                )
-
-                                if (userId != null) {
-                                    db.collection("users").document(userId)
-                                        .set(user)
-                                        .addOnSuccessListener {
-                                            Toast.makeText(activity, "Usuário salvo no Firestore!", Toast.LENGTH_SHORT).show()
-                                        }
-                                        .addOnFailureListener { e ->
-                                            Toast.makeText(activity, "Erro ao salvar no Firestore!", Toast.LENGTH_SHORT).show()
-                                        }
-                                }
                             } else {
                                 Toast.makeText(
                                     activity,
@@ -144,8 +130,7 @@ fun RegisterPage( modifier: Modifier = Modifier) {
                         }
                 },
                 enabled = userName.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && passwordConfirm.isNotEmpty()
-            )
-            {
+            ) {
                 Text("Registrar")
             }
 
