@@ -1,6 +1,8 @@
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.weatherapp.api.WeatherService
 import com.example.weatherapp.api.toWeather
@@ -10,16 +12,20 @@ import com.example.weatherapp.db.fb.FBUser
 import com.example.weatherapp.db.fb.toFBCity
 import com.example.weatherapp.model.City
 import com.example.weatherapp.model.User
+import com.example.weatherapp.ui.nav.BottomNavItem.Route
 import com.google.android.gms.maps.model.LatLng
 
-class MainViewModel (private val db: FBDatabase,
-                     private val service : WeatherService): ViewModel(), FBDatabase.Listener {
+
+class MainViewModel (private val db: FBDatabase, private val service : WeatherService): ViewModel(), FBDatabase.Listener {
     private val _cities = mutableStateMapOf<String, City>()
     val cities : List<City>
         get() = _cities.values.toList()
     private val _user = mutableStateOf<User?> (null)
     val user : User?
         get() = _user.value
+
+    var city by mutableStateOf<City?>(null)
+
     init {
         db.setListener(this)
     }
@@ -69,4 +75,8 @@ class MainViewModel (private val db: FBDatabase,
             _cities[name] = newCity
         }
     }
+    private var _page = mutableStateOf<Route>(Route.Home)
+    var page: Route
+        get() = _page.value
+        set(tmp) { _page.value = tmp }
 }

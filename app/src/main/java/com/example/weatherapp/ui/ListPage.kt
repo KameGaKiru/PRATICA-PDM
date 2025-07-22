@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.weatherapp.model.City
+import com.example.weatherapp.ui.nav.BottomNavItem.Route
 
 
 @SuppressLint("ContextCastToActivity")
@@ -46,12 +47,19 @@ fun ListPage(modifier: Modifier = Modifier, viewModel: MainViewModel) {
                     viewModel.loadWeather(city.name)
                 }
             }
-            CityItem(city = city, onClose = {
-                viewModel.remove(city)
-                Toast.makeText(activity, "Cidade Deletada!", Toast.LENGTH_LONG).show()
-            }, onClick = {
-                Toast.makeText(activity, "Cidade Favoritada", Toast.LENGTH_LONG).show()
-            })
+            CityItem(
+                city = city,
+                onClose = {
+                    viewModel.remove(city)
+                    Toast.makeText(activity, "Cidade Deletada!", Toast.LENGTH_LONG).show()
+                },
+                onClick = {
+                    viewModel.city = city
+                    viewModel.page = Route.Home
+                    Toast.makeText(activity, "Cidade Favoritada", Toast.LENGTH_SHORT).show()
+                }
+            )
+
         }
     }
 }
