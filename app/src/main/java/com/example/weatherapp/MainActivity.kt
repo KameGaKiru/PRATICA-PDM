@@ -34,6 +34,7 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import android.Manifest
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.weatherapp.api.WeatherService
 import com.example.weatherapp.db.fb.FBDatabase
 import com.example.weatherapp.model.MainViewModelFactory
 import com.google.firebase.Firebase
@@ -47,8 +48,9 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             val fbDB = remember { FBDatabase }
-            val viewModel : MainViewModel = viewModel(
-                factory = MainViewModelFactory(fbDB)
+            val weatherService = remember { WeatherService()}
+                val viewModel : MainViewModel = viewModel(
+                factory = MainViewModelFactory(fbDB, weatherService)
             )
 
             var showDialog by remember { mutableStateOf(false) }
