@@ -13,5 +13,9 @@ interface WeatherServiceAPI {
     // Procura a localização baseado no nome ou coordenadas
     @GET("search.json?key=$API_KEY&lang=pt_br")
     fun search(@Query("q") query: String): Call<List<APILocation>?>
+
+    // Esse novo endpoint retorna as condições climáticas atuais da cidade
+    @GET("current.json?key=$API_KEY&lang=pt")
+    fun weather(@Query("q") query: String): Call<APICurrentWeather?>
 }
 
