@@ -33,7 +33,6 @@ import com.example.weatherapp.ui.theme.WeatherAppTheme
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import android.Manifest
-import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherapp.api.WeatherService
 import com.example.weatherapp.db.fb.FBDatabase
@@ -100,7 +99,7 @@ class MainActivity : ComponentActivity() {
 
                             )
 
-                        BottomNavBar(viewModel, items)
+                        BottomNavBar(navController = navController, items)
 
                     },
 
@@ -116,18 +115,6 @@ class MainActivity : ComponentActivity() {
                     Box(modifier = Modifier.padding(innerPadding)) {
                         launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                         MainNavHost(navController = navController, viewModel = viewModel)
-                    }
-                    LaunchedEffect(viewModel.page) {
-                        navController.navigate(viewModel.page) {
-// Volta pilha de navegação até HomePage (startDest).
-                            navController.graph.startDestinationRoute?.let {
-                                popUpTo(it) {
-                                    saveState = true
-                                }
-                                restoreState = true
-                            }
-                            launchSingleTop = true
-                        }
                     }
                 }
             }
