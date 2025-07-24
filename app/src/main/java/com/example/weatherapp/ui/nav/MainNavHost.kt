@@ -14,7 +14,7 @@ import com.example.weatherapp.ui.MapPage
 @Composable
 fun MainNavHost(navController: NavHostController, viewModel: MainViewModel) {
     NavHost(navController, startDestination = BottomNavItem.Route.Home) {
-        composable<BottomNavItem.Route.Home> { HomePage(modifier = Modifier, viewModel = viewModel) }
+        composable<BottomNavItem.Route.Home> { HomePage( viewModel = viewModel) }
         composable<BottomNavItem.Route.List> { ListPage(viewModel = viewModel) }
         composable<BottomNavItem.Route.Map> { MapPage(viewModel = viewModel) }
     }

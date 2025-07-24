@@ -17,5 +17,9 @@ interface WeatherServiceAPI {
     // Esse novo endpoint retorna as condições climáticas atuais da cidade
     @GET("current.json?key=$API_KEY&lang=pt")
     fun weather(@Query("q") query: String): Call<APICurrentWeather?>
+
+    //Esse é o novo endpoint que retorna as previsões do tempo dos próximos 10 dias
+    @GET("forecast.json?key=$API_KEY&days=10&lang=pt")
+    fun forecast(@Query("q") name: String): Call<APIWeatherForecast?>
 }
 

@@ -3,6 +3,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.weatherapp.api.WeatherService
+import com.example.weatherapp.api.toForecast
 import com.example.weatherapp.api.toWeather
 import com.example.weatherapp.db.fb.FBCity
 import com.example.weatherapp.db.fb.FBDatabase
@@ -10,22 +11,36 @@ import com.example.weatherapp.db.fb.FBUser
 import com.example.weatherapp.db.fb.toFBCity
 import com.example.weatherapp.model.City
 import com.example.weatherapp.model.User
+import com.example.weatherapp.ui.nav.BottomNavItem.Route
 import com.google.android.gms.maps.model.LatLng
 
 class MainViewModel (private val db: FBDatabase,
                      private val service : WeatherService): ViewModel(), FBDatabase.Listener {
-    private val _cities = mutableStateMapOf<String, City>()
-    val cities : List<City>
-        get() = _cities.values.toList()
-    private val _user = mutableStateOf<User?> (null)
-    val user : User?
-        get() = _user.value
-    init {
+                     private val _cities = mutableStateMapOf<String, City>()
+                     val cities : List<City>
+                     get() = _cities.values.toList()
+                     private val _user = mutableStateOf<User?> (null)
+                     val user : User? get() = _user.value
+
+    private var _city = mutableStateOf<City?>(null)
+    var city: City?
+        get() = _city.value
+        set(tmp) { _city.value = tmp?.copy() }
+
+    private var _page = mutableStateOf<Route>(Route.Home)
+    var page: Route
+        get() = _page.value
+        set(tmp) { _page.value = tmp}
+
+            init {
         db.setListener(this)
     }
+
     fun remove(city: City) {
         db.remove(city.toFBCity())
     }
+
+
 
     fun add(name: String) {
         service.getLocation(name) { lat, lng ->
@@ -57,9 +72,11 @@ class MainViewModel (private val db: FBDatabase,
     override fun onCityUpdated(city: FBCity) {
         _cities.remove(city.name)
         _cities[city.name!!] = city.toCity()
+        if (_city.value?.name == city.name) { _city.value = city.toCity() }
     }
     override fun onCityRemoved(city: FBCity) {
         _cities.remove(city.name)
+        if (_city.value?.name == city.name) { _city.value = null }
     }
 
     fun loadWeather(name: String) {
@@ -69,4 +86,12 @@ class MainViewModel (private val db: FBDatabase,
             _cities[name] = newCity
         }
     }
-}
+    fun loadForecast(name: String) {
+        service.getForecast(name) { apiForecast ->
+            val newCity = _cities[name]!!.copy( forecast = apiForecast?.toForecast() )
+            _cities.remove(name)
+            _cities[name] = newCity
+            city = if (city?.name == name) newCity else city
+        }
+    }
+    }

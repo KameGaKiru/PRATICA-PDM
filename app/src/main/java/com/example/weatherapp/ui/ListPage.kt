@@ -3,7 +3,6 @@ package com.example.weatherapp.ui
 import MainViewModel
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,6 +27,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.weatherapp.model.City
+import com.example.weatherapp.ui.nav.BottomNavItem.Route
 
 
 @SuppressLint("ContextCastToActivity")
@@ -46,12 +46,16 @@ fun ListPage(modifier: Modifier = Modifier, viewModel: MainViewModel) {
                     viewModel.loadWeather(city.name)
                 }
             }
-            CityItem(city = city, onClose = {
-                viewModel.remove(city)
-                Toast.makeText(activity, "Cidade Deletada!", Toast.LENGTH_LONG).show()
-            }, onClick = {
-                Toast.makeText(activity, "Cidade Favoritada", Toast.LENGTH_LONG).show()
-            })
+            CityItem(
+                city = city,
+                onClick = {
+                    viewModel.city = city
+                    viewModel.page = Route.Home
+                },
+                onClose = {
+                    viewModel.remove(city)
+                }
+            )
         }
     }
 }
