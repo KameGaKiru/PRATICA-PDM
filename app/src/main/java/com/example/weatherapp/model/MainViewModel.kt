@@ -15,7 +15,7 @@ import com.example.weatherapp.ui.nav.BottomNavItem.Route
 import com.google.android.gms.maps.model.LatLng
 
 class MainViewModel (private val db: FBDatabase,
-                     private val service : WeatherService): ViewModel(), FBDatabase.Listener {
+                     internal val service : WeatherService): ViewModel(), FBDatabase.Listener {
                      private val _cities = mutableStateMapOf<String, City>()
                      val cities : List<City>
                      get() = _cities.values.toList()
