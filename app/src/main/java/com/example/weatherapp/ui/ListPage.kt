@@ -4,18 +4,13 @@ import MainViewModel
 import android.annotation.SuppressLint
 import android.app.Activity
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -31,7 +26,6 @@ import coil.compose.AsyncImage
 import com.example.weatherapp.R
 import com.example.weatherapp.model.City
 import com.example.weatherapp.ui.nav.BottomNavItem.Route
-
 
 @SuppressLint("ContextCastToActivity")
 @Composable
@@ -71,7 +65,10 @@ fun CityItem(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.fillMaxWidth().padding(8.dp).clickable { onClick() },
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
@@ -84,13 +81,31 @@ fun CityItem(
         Spacer(modifier = Modifier.size(12.dp))
 
         Column(modifier = modifier.weight(1f)) {
-            Text(modifier = Modifier,
-                text = city.name,
-                fontSize = 24.sp)
-            Text(modifier = Modifier,
-                text = city.weather?.desc?:"carregando...",
-                fontSize = 16.sp)
+            // Nome + ícone de monitoramento (apenas indicador, sem clique)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = city.name,
+                    fontSize = 24.sp
+                )
+                Spacer(modifier = Modifier.size(6.dp))
+                val icon = if (city.isMonitored) {
+                    Icons.Filled.Notifications
+                } else {
+                    Icons.Outlined.Notifications
+                }
+                Icon(
+                    imageVector = icon,
+                    contentDescription = "Monitorada?",
+                    modifier = Modifier.size(20.dp) // menor que no HomePage
+                )
+            }
+
+            Text(
+                text = city.weather?.desc ?: "carregando...",
+                fontSize = 16.sp
+            )
         }
+
         IconButton(onClick = onClose) {
             Icon(Icons.Filled.Close, contentDescription = "Close")
         }
