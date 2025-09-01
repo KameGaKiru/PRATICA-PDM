@@ -1,7 +1,7 @@
 package com.example.weatherapp
 
 import CityDialog
-import MainViewModel
+import com.example.weatherapp.model.MainViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -33,13 +33,17 @@ import com.example.weatherapp.ui.theme.WeatherAppTheme
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import android.Manifest
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherapp.api.WeatherService
 import com.example.weatherapp.db.fb.FBDatabase
 import com.example.weatherapp.model.MainViewModelFactory
+import com.example.weatherapp.ui.nav.BottomNavItem.Route
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import android.content.Intent
+import com.example.weatherapp.monitor.ForecastMonitor
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -48,11 +52,22 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
 
+            val monitor = ForecastMonitor(this)
             val fbDB = remember { FBDatabase }
             val weatherService = remember { WeatherService()}
-                val viewModel : MainViewModel = viewModel(
-                factory = MainViewModelFactory(fbDB, weatherService)
+            val viewModel : MainViewModel = viewModel(
+                factory = MainViewModelFactory(fbDB, weatherService, monitor)
             )
+            DisposableEffect(Unit) {
+                val listener = androidx.core.util.Consumer<Intent> { intent ->
+                    val name = intent.getStringExtra("city")
+                    val city = viewModel.cities.find { it.name == name }
+                    viewModel.city = city
+                    viewModel.page = Route.Home
+                }
+                addOnNewIntentListener(listener)
+                onDispose { removeOnNewIntentListener(listener) }
+            }
 
             var showDialog by remember { mutableStateOf(false) }
             //val viewModel : MainViewModel by viewModels()

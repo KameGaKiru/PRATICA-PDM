@@ -1,6 +1,6 @@
 package com.example.weatherapp.ui
 
-import MainViewModel
+import com.example.weatherapp.model.MainViewModel
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager

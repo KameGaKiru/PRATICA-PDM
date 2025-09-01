@@ -1,8 +1,7 @@
 package com.example.weatherapp.ui.nav
 
-import MainViewModel
+import com.example.weatherapp.model.MainViewModel
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable

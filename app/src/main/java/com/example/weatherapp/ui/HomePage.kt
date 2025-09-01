@@ -1,6 +1,6 @@
 package com.example.weatherapp.ui
 
-import MainViewModel
+import com.example.weatherapp.model.MainViewModel
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

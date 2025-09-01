@@ -58,6 +58,8 @@ android {
 
 dependencies {
 
+    implementation ("androidx.work:work-runtime-ktx:2.9.0")
+
     // Google maps
     implementation("com.google.android.gms:play-services-maps:19.2.0")
     implementation("com.google.android.gms:play-services-location:21.3.0")

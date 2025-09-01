@@ -1,6 +1,6 @@
 package com.example.weatherapp.ui.nav
 
-import MainViewModel
+import com.example.weatherapp.model.MainViewModel
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem

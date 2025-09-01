@@ -1,4 +1,5 @@
-import androidx.compose.runtime.mutableStateListOf
+package com.example.weatherapp.model
+
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -9,13 +10,14 @@ import com.example.weatherapp.db.fb.FBCity
 import com.example.weatherapp.db.fb.FBDatabase
 import com.example.weatherapp.db.fb.FBUser
 import com.example.weatherapp.db.fb.toFBCity
-import com.example.weatherapp.model.City
-import com.example.weatherapp.model.User
+import com.example.weatherapp.monitor.ForecastMonitor
 import com.example.weatherapp.ui.nav.BottomNavItem.Route
 import com.google.android.gms.maps.model.LatLng
+import kotlin.collections.get
 
 class MainViewModel (private val db: FBDatabase,
-                     internal val service : WeatherService): ViewModel(), FBDatabase.Listener {
+                     internal val service : WeatherService,
+                     private val monitor: ForecastMonitor): ViewModel(), FBDatabase.Listener {
                      private val _cities = mutableStateMapOf<String, City>()
                      val cities : List<City>
                      get() = _cities.values.toList()
@@ -40,28 +42,20 @@ class MainViewModel (private val db: FBDatabase,
         db.remove(city.toFBCity())
     }
 
-
-
     fun add(name: String) {
         service.getLocation(name) { lat, lng ->
             if (lat != null && lng != null) {
-                db.add(City(name=name, location=LatLng(lat, lng)).toFBCity())
-            }
-        }
-    }
-    fun add(location: LatLng) {
-        service.getName(location.latitude, location.longitude) { name ->
-            if (name != null) {
-                db.add(City(name = name, location = location).toFBCity())
-            }
+                db.add(City(name = name, location = LatLng(lat, lng), isMonitored = true).toFBCity())            }
         }
     }
 
     fun add(name: String, location : LatLng? = null) {
-        db.add(City(name = name, location = location).toFBCity())
-    }
+        db.add(City(name = name, location = location, isMonitored = true).toFBCity())    }
 
-    fun update(city: City) {
+    fun update(city: City){
+        _city.value = city
+        _cities[city.name] = city
+
         db.update(city.toFBCity())
     }
 
@@ -69,11 +63,14 @@ class MainViewModel (private val db: FBDatabase,
         _user.value = user.toUser()
     }
     override fun onUserSignOut() {
-        //TODO("Not yet implemented")
+        monitor.cancelAll()
     }
+
     override fun onCityAdded(city: FBCity) {
         _cities[city.name!!] = city.toCity()
+        monitor.updateCity(city.toCity())
     }
+
     override fun onCityUpdated(city: FBCity) {
         val oldCity = _cities[city.name]
         _cities.remove(city.name)
@@ -84,11 +81,16 @@ class MainViewModel (private val db: FBDatabase,
         if (_city.value?.name == city.name) {
             _city.value = _cities[city.name]
         }
+        monitor.updateCity(city.toCity())
     }
 
     override fun onCityRemoved(city: FBCity) {
         _cities.remove(city.name)
-        if (_city.value?.name == city.name) { _city.value = null }
+        monitor.cancelCity(city.toCity())
+        if (_city.value?.name == city.name) {
+            _city.value = null
+        }
+        monitor.cancelCity(city.toCity())
     }
 
     fun loadWeather(name: String) {
@@ -110,7 +112,7 @@ class MainViewModel (private val db: FBDatabase,
         val city = _cities[name]
         service.getBitmap(city?.weather!!.imgUrl) { bitmap ->
             val newCity = city.copy(
-                weather = city.weather?.copy(
+                weather = city.weather.copy(
                     bitmap = bitmap
                 )
             )
